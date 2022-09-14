@@ -40,7 +40,8 @@ It uses rgb( 34, 34, 255) as primary color and rgb( 0, 0, 223) as secondary colo
 ## Menu and Menu Items
 
 Menu will look like this
-![menu](screenshots/menu.PNG?raw=true "Title")
+
+![menu](screenshots/menu.png?raw=true "Title")
 
 ## Disabled Mode
 
@@ -56,36 +57,41 @@ When no theme is applied it looks like this
 ## Usage
 
 Add [icons](icons) directory and .qss files to your Qt resource files (qrc files e.g. resource.qrc).
-Then in your main source file use
+Then in your main source file (C++) use
 
 ```cpp
-#include "mainwindow.hpp"
-#include <QApplication>
 
-// Your other headers here
-#include <QFile> // for file I/O
+QApplication app(argc, argv);
 
-int main(int argc, char *argv[])
+// other codes here!
+
+QString theme = "DarkMaroon"; // it can be DarkBlue, DarkPurple, or DarkGreen
+
+QFile theme_file(QString(":/%1.qss").arg(theme));
+theme_file.open(QFile::ReadOnly);   //open theme file
+
+if(theme_file.isOpen())
 {
-    QApplication a(argc, argv);
-    
-    QString theme = "DarkMaroon"; // it can be DarkBlue, DarkPurple, or DarkGreen
-
-    QFile theme_file(QString(":/%1.qss").arg(theme));
-    theme_file.open(QFile::ReadOnly);   //open theme file
-    if(theme_file.isOpen()) {
-        a.setStyleSheet(theme_file.readAll());
-        theme_file.close();
-    }
-    else {
-        qDebug("File couldn't be opened!");
-    }
-
-    MainWindow w;
-    //continue your codes here!
-    w.show();
-    return a.exec();
+    app.setStyleSheet(theme_file.readAll());        //set the theme here!
+    theme_file.close();
 }
+else
+{
+    qDebug("File couldn't be opened!");
+}
+
+```
+
+For using in python project use
+
+```python
+try:
+    theme = "DarkMaroon" # it can be DarkBlue, DarkPurple, or DarkGreen too.
+    with open(":/{}.qss".format(theme),"r") as theme_file:
+        # app is a QApplication instance.
+        app.setStyleTheme(theme_file.read())
+except:
+    print("error : couldn't open the file.")
 
 ```
 
